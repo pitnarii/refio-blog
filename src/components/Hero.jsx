@@ -1,3 +1,7 @@
+import headerImage from "../assets/header_image.jpg"
+
+const authorAvatar =
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop"
 
 export default function Hero() {
   return (
@@ -16,7 +20,7 @@ export default function Hero() {
 
       <div className="flex justify-center">
         <img
-          src= "src/assets/header_image.jpg"
+          src={headerImage}
           alt="Author with a cat in an autumn forest"
           className="h-[420px] w-[280px] rounded-3xl object-cover shadow-sm sm:h-[480px] sm:w-[320px]"
         />
