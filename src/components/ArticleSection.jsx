@@ -1,23 +1,15 @@
 import { useState } from "react"
 import { articles, filters } from "../data/articles"
 import ArticleCard from "./ArticleCard"
-
-function SearchIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      className="h-4 w-4 text-gray-400"
-    >
-      <path
-        fillRule="evenodd"
-        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-        clipRule="evenodd"
-      />
-    </svg>
-  )
-}
+import { Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export default function ArticleSection() {
   const [activeFilter, setActiveFilter] = useState("Highlight")
@@ -44,7 +36,22 @@ export default function ArticleSection() {
       </h2>
 
       <div className="mb-10 flex flex-col gap-4 rounded-2xl bg-[#EFEEEB] p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-2">
+        <div className="w-full sm:hidden">
+          <Select value={activeFilter} onValueChange={setActiveFilter}>
+            <SelectTrigger className="h-10 w-full rounded-full border-0 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm">
+              <SelectValue placeholder="Highlight" />
+            </SelectTrigger>
+            <SelectContent>
+              {filters.map((filter) => (
+                <SelectItem key={filter} value={filter}>
+                  {filter}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="hidden flex-wrap gap-2 sm:flex">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -60,17 +67,16 @@ export default function ArticleSection() {
             </button>
           ))}
         </div>
-        <div className="relative">
-          <input
-            type="search"
+
+        <div className="relative w-full sm:w-auto sm:min-w-[240px]">
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Input
+            type="text"
             placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded-lg bg-white py-2 pr-10 pl-4 text-sm text-gray-900 placeholder:text-gray-400 outline-none sm:w-56"
+            className="rounded-sm py-3 placeholder:text-muted-foreground focus-visible:border-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2">
-            <SearchIcon />
-          </span>
         </div>
       </div>
 

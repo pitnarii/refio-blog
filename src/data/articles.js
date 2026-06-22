@@ -67,4 +67,4 @@ export const articles = [
   },
 ]
 
-export const filters = ["Highlight", "Cat", "Inspiration", "General"]
+export const filters = ["Highlight", "Green Living", "Inspiration", "Business"]
