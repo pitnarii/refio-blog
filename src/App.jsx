@@ -1,14 +1,14 @@
 import Navbar from "./components/Navbar"
-import Hero from "./components/Hero"
+import HeroSection from "./components/Hero"
 import ArticleSection from "./components/ArticleSection"
 import Footer from "./components/Footer"
 
 function App() {
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <div className="mx-auto max-w-6xl px-6">
+    <div className="min-h-screen bg-[#F9F8F6] text-gray-900">
+      <div className="mx-auto w-full max-w-page px-2">
         <Navbar />
-        <Hero />
+        <HeroSection />
         <ArticleSection />
         <Footer />
       </div>

@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: "Poppins", system-ui, sans-serif;
+  --max-width-page: 1440px;
 }
 
 body {

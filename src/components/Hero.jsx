@@ -3,7 +3,7 @@ import headerImage from "../assets/header_image.jpg"
 const authorAvatar =
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop"
 
-export default function Hero() {
+export default function HeroSection() {
   return (
     <section className="grid grid-cols-1 items-center gap-10 py-8 lg:grid-cols-[1fr_auto_1fr] lg:gap-8 lg:py-12">
       <div className="text-left lg:pr-4">
@@ -21,25 +21,23 @@ export default function Hero() {
       <div className="flex justify-center">
         <img
           src={headerImage}
-          alt="Author with a cat in an autumn forest"
+          alt="green-statue"
           className="h-[420px] w-[280px] rounded-3xl object-cover shadow-sm sm:h-[480px] sm:w-[320px]"
         />
       </div>
 
       <div className="text-left lg:pl-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
-          -Author
+        <p className="text-sm font-medium uppercase tracking-wider text-gray-400">
+          -Founder
         </p>
         <h2 className="mt-2 text-xl font-bold text-gray-900">Pitnaree K.</h2>
         <div className="mt-4 space-y-3 text-sm leading-relaxed text-gray-500">
           <p>
-            I am a pet enthusiast and freelance writer who specializes in
-            animal behavior and care. With a deep love for cats, I enjoy
-            sharing insights on feline companionship and wellness.
+            I am advocates to spread an overconsumption awareness and practice daily life recycling.          
           </p>
           <p>
-            When I&apos;m not writing, I spend time volunteering at my local
-            animal shelter, helping cats find loving homes.
+            Refio is a community where I want to share an information about sustainability practice 
+            and support small sustainable focus businesses.
           </p>
         </div>
         <img

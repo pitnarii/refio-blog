@@ -43,7 +43,7 @@ export default function ArticleSection() {
         Latest articles
       </h2>
 
-      <div className="mb-10 flex flex-col gap-4 rounded-2xl bg-gray-100 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-10 flex flex-col gap-4 rounded-2xl bg-[#EFEEEB] p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {filters.map((filter) => (
             <button
