@@ -1,6 +1,5 @@
 import { useState } from "react"
-import { articles, filters } from "../data/articles"
-import ArticleCard from "./ArticleCard"
+import {blogPosts, filters } from "../data/blogPosts"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
@@ -15,7 +14,7 @@ export default function ArticleSection() {
   const [activeFilter, setActiveFilter] = useState("Highlight")
   const [searchQuery, setSearchQuery] = useState("")
 
-  const filteredArticles = articles.filter((article) => {
+  const filteredArticles = blogPosts.filter((article) => {
     const matchesFilter =
       activeFilter === "Highlight" ||
       activeFilter === "General" ||
@@ -28,7 +27,34 @@ export default function ArticleSection() {
 
     return matchesFilter && matchesSearch
   })
-
+  function BlogCard({image, category, title, description, author, date}) {
+    return (
+      <div className="flex flex-col gap-4">
+        <a href="#" className="relative block h-[212px] sm:h-[360px] overflow-hidden rounded-md">
+          <img className="h-full w-full object-cover" src={image} alt={title}/>
+        </a>
+        <div className="flex flex-col">
+          <div className="flex">
+            <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">{category}</span>
+          </div>
+          <a href="#">
+            <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
+              {title}
+            </h2>
+          </a>
+          <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
+            {description}
+          </p>
+          <div className="flex items-center text-sm">
+            <img className="w-8 h-8 rounded-full mr-2" src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg" alt="Tomson P." />
+            <span>{author}</span>
+            <span className="mx-2 text-gray-300">|</span>
+            <span>{date}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <section className="py-10">
       <h2 className="mb-6 text-left text-xl font-bold text-gray-900">
@@ -81,8 +107,16 @@ export default function ArticleSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-        {filteredArticles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
+        {blogPosts.slice(0, 6).map((post) => (
+          <BlogCard
+            key={post.id}
+            image={post.image}
+            category={post.category}
+            title={post.title}
+            description={post.description}
+            author={post.author}
+            date={post.date}
+          />
         ))}
       </div>
 
