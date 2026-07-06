@@ -62,9 +62,20 @@ export default function ArticleSection() {
       </h2>
 
       <div className="mb-10 flex flex-col gap-4 rounded-2xl bg-[#EFEEEB] p-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="w-full sm:hidden">
+        <div className="relative order-1 w-full sm:order-2 sm:w-auto sm:min-w-[240px]">
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="rounded-sm py-3 placeholder:text-muted-foreground focus-visible:border-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+        </div>
+
+        <div className="order-2 w-full sm:hidden">
           <Select value={activeFilter} onValueChange={setActiveFilter}>
-            <SelectTrigger className="h-10 w-full rounded-full border-0 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm">
+            <SelectTrigger className="h-10 w-full rounded-sm border-0 bg-white px-4 text-sm font-medium text-gray-900 shadow-sm">
               <SelectValue placeholder="Highlight" />
             </SelectTrigger>
             <SelectContent>
@@ -77,32 +88,21 @@ export default function ArticleSection() {
           </Select>
         </div>
 
-        <div className="hidden flex-wrap gap-2 sm:flex">
+        <div className="order-3 hidden flex-wrap gap-2 sm:order-1 sm:flex">
           {filters.map((filter) => (
             <button
               key={filter}
               type="button"
               onClick={() => setActiveFilter(filter)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
                 activeFilter === filter
-                  ? "bg-white text-gray-900 shadow-sm"
+                  ? "bg-[#DAD6D1] text-gray-900 shadow-sm"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
               {filter}
             </button>
           ))}
-        </div>
-
-        <div className="relative w-full sm:w-auto sm:min-w-[240px]">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="rounded-sm py-3 placeholder:text-muted-foreground focus-visible:border-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
-          />
         </div>
       </div>
 
