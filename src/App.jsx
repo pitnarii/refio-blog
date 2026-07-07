@@ -6,8 +6,8 @@ import Footer from "./components/Footer"
 function App() {
   return (
     <div className="min-h-screen bg-[#F9F8F6] text-gray-900">
-      <div className="mx-auto w-full max-w-page px-2">
-        <Navbar />
+       <Navbar />
+      <div className="mx-auto w-full max-w-page px-10">
         <HeroSection />
         <ArticleSection />
         <Footer />

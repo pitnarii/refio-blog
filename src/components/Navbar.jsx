@@ -1,10 +1,21 @@
+
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Menu } from "lucide-react"
 export default function Navbar() {
   return (
-    <header className="flex items-center justify-between py-6 ">
+    <header className="border-b border-gray-300">
+    <div className="mx-auto flex max-w-page justify-between px-10 py-6">
       <a href="/" className="text-4xl font-bold text-gray-900">
         Refio
         <span className="text-green-500">.</span>
       </a>
+      {/* Desktop: buttons */}
       <div className="hidden md:flex space-x-4">
         <button
           type="button"
@@ -18,6 +29,21 @@ export default function Navbar() {
         >
           Sign up
         </button>
+      </div>
+      {/* mobile: dropdown */}
+      <div className="md:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={<Button variant="ghost" size="icon" />}
+          >
+            <Menu className="size-5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Log in</DropdownMenuItem>
+            <DropdownMenuItem>Sign up</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       </div>
     </header>
   )
