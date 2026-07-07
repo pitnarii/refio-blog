@@ -38,9 +38,16 @@ export default function Navbar() {
           >
             <Menu className="size-5" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Log in</DropdownMenuItem>
-            <DropdownMenuItem>Sign up</DropdownMenuItem>
+          <DropdownMenuContent align="end" className="bg-[#F9F8F6]">
+            <DropdownMenuItem>
+            <button
+              type="button" className="w-full rounded-full border border-gray-300 px-6 py-2 text-m font-medium text-gray-900 transition-colors hover:text-gray-500"
+            >Log in</button>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <button 
+                 type="button" className="w-full rounded-full bg-gray-900 px-6 py-2 text-m font-medium text-white hover:bg-gray-700 transition-color">Sign up</button>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
