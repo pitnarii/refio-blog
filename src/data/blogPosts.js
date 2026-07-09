@@ -31,7 +31,7 @@ export const blogPosts = [
     id: 3,
     image:
       "https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449771/my-blog-post/zzye4nxfm3pmh81z7hni.jpg",
-    category: "Inspiration",
+    category: "General",
     title: "Embracing Change: How to Thrive in Times of Transition",
     description:
       "Learn powerful strategies to navigate life's changes with grace and emerge stronger on the other side.",
@@ -59,7 +59,7 @@ export const blogPosts = [
     id: 5,
     image:
       "https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449771/my-blog-post/g8qpepvgnz6gioylyhrz.jpg",
-    category: "Inspiration",
+    category: "General",
     title: "The Power of Habits: Small Changes, Big Results",
     description:
       "Discover how small, consistent habits can lead to significant personal and professional growth over time.",
@@ -85,4 +85,4 @@ export const blogPosts = [
   },
 ];
 
-export const filters = ["Highlight", "Green Living", "Inspiration", "Business"]
+export const filters = ["Highlight", "General", "Cat"]

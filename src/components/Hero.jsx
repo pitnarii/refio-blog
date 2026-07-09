@@ -1,10 +1,4 @@
 import headerImage from "../assets/header_image.jpg"
-import {
-  Alert,
-  AlertAction,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
 const authorAvatar =
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop"
 

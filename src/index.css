@@ -136,3 +136,65 @@ body {
     @apply font-sans;
   }
 }
+
+@layer components {
+  .markdown {
+    @apply text-gray-700;
+  }
+
+  .markdown h1 {
+    @apply mb-4 mt-8 text-2xl font-bold text-gray-900 first:mt-0;
+  }
+
+  .markdown h2 {
+    @apply mb-3 mt-8 text-xl font-bold text-gray-900 first:mt-0;
+  }
+
+  .markdown h3 {
+    @apply mb-2 mt-6 text-lg font-bold text-gray-900;
+  }
+
+  .markdown p {
+    @apply mb-4 text-base leading-7 text-gray-600;
+  }
+
+  .markdown ul {
+    @apply mb-4 list-disc space-y-2 pl-6 text-gray-600;
+  }
+
+  .markdown ol {
+    @apply mb-4 list-decimal space-y-2 pl-6 text-gray-600;
+  }
+
+  .markdown li {
+    @apply leading-7;
+  }
+
+  .markdown li > p {
+    @apply mb-2;
+  }
+
+  .markdown strong {
+    @apply font-semibold text-gray-900;
+  }
+
+  .markdown a {
+    @apply text-gray-900 underline underline-offset-4 transition-colors hover:text-gray-600;
+  }
+
+  .markdown blockquote {
+    @apply my-4 border-l-4 border-gray-300 pl-4 italic text-gray-600;
+  }
+
+  .markdown code {
+    @apply rounded bg-gray-100 px-1.5 py-0.5 text-sm text-gray-800;
+  }
+
+  .markdown pre {
+    @apply my-4 overflow-x-auto rounded-xl bg-gray-100 p-4;
+  }
+
+  .markdown pre code {
+    @apply bg-transparent p-0;
+  }
+}

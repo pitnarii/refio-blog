@@ -1,5 +1,7 @@
-import { useState } from "react"
-import {blogPosts, filters } from "../data/blogPosts"
+import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import axios from "axios"
+import {filters} from "../data/blogPosts"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
@@ -10,24 +12,48 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+// function for changing date format
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })
+}
+
 export default function ArticleSection() {
   const [activeFilter, setActiveFilter] = useState("Highlight")
   const [searchQuery, setSearchQuery] = useState("")
 
+// fetching data from api
+  const [blogPosts, setPosts] = useState([])
+  useEffect(() => {
+    const getPosts = async () => {
+      try {
+        const { data } = await axios(
+          "https://blog-post-project-api.vercel.app/posts"
+        );
+        setPosts(data.posts);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getPosts();
+  }, [])
+
   const filteredArticles = blogPosts.filter((article) => {
     const matchesFilter =
-      activeFilter === "Highlight" ||
-      activeFilter === "General" ||
-      article.category === activeFilter
+      activeFilter === "Highlight" || article.category === activeFilter
 
     const matchesSearch =
       searchQuery === "" ||
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+      article.description.toLowerCase().includes(searchQuery.toLowerCase())
 
     return matchesFilter && matchesSearch
   })
-  function BlogCard({image, category, title, description, author, date}) {
+  function BlogCard({ id, image, category, title, description, author, date }) {
     return (
       <div className="flex flex-col gap-4">
         <a href="#" className="relative block h-[212px] sm:h-[360px] overflow-hidden rounded-md">
@@ -37,11 +63,11 @@ export default function ArticleSection() {
           <div className="flex">
             <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">{category}</span>
           </div>
-          <a href="#">
+          <Link to={`/viewPostPage/${id}`}>
             <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
               {title}
             </h2>
-          </a>
+          </Link>
           <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
             {description}
           </p>
@@ -49,7 +75,7 @@ export default function ArticleSection() {
             <img className="w-8 h-8 rounded-full mr-2" src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg" alt="Tomson P." />
             <span>{author}</span>
             <span className="mx-2 text-gray-300">|</span>
-            <span>{date}</span>
+            <span>{formatDate(date)}</span>
           </div>
         </div>
       </div>
@@ -107,9 +133,10 @@ export default function ArticleSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-        {blogPosts.slice(0, 6).map((post) => (
+        {filteredArticles.slice(0, 6).map((post) => (
           <BlogCard
             key={post.id}
+            id={post.id}
             image={post.image}
             category={post.category}
             title={post.title}
