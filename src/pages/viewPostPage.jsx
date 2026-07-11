@@ -237,9 +237,12 @@ function ViewPostPage() {
           <Button type="button" onClick={handleSendComment}>
             Send
           </Button>
+          {/* create account alert */}
           <AlertDialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
             <AlertDialogContent size="sm">
-              <Button variant="ghost" size="icon" className="absolute top-2 right-2 " aria-label="Close or Delete">
+              <Button 
+              onClick={() => setShowLoginDialog(false)} //close an alert box with 'X'
+              variant="ghost" size="icon" className="absolute top-2 right-2 " aria-label="Close or Delete">
                 <X className="h-4 w-4" />
               </Button>
               <AlertDialogHeader>
