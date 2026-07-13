@@ -231,3 +231,36 @@ body {
 [data-sonner-toast][data-type="error"] [data-close-button]:hover {
   background-color: rgb(255 255 255 / 0.1) !important;
 }
+
+/* Success toast for profile save and password reset */
+[data-sonner-toast][data-type="success"] {
+  position: relative !important;
+  padding-right: 2.5rem !important;
+  background-color: #22c55e !important;
+  color: white !important;
+  border-color: #22c55e !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-title] {
+  color: white !important;
+  font-weight: 600;
+}
+
+[data-sonner-toast][data-type="success"] [data-description] {
+  color: rgb(255 255 255 / 0.9) !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-close-button] {
+  position: absolute !important;
+  left: auto !important;
+  right: 0.75rem !important;
+  top: 0.75rem !important;
+  transform: none !important;
+  color: white !important;
+  border-color: rgb(255 255 255 / 0.3) !important;
+  background-color: transparent !important;
+}
+
+[data-sonner-toast][data-type="success"] [data-close-button]:hover {
+  background-color: rgb(255 255 255 / 0.1) !important;
+}

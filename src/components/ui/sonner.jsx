@@ -30,6 +30,9 @@ const Toaster = ({
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
           "--border-radius": "var(--radius)",
+          "--success-bg": "#22c55e",
+          "--success-text": "#ffffff",
+          "--success-border": "#22c55e",
           "--error-bg": "#ef4444",
           "--error-text": "#ffffff",
           "--error-border": "#ef4444",
@@ -38,6 +41,8 @@ const Toaster = ({
       toastOptions={{
         classNames: {
           toast: "cn-toast",
+          success:
+            "!relative !bg-green-500 !pr-10 !text-white !border-green-500 shadow-lg rounded-lg",
           error:
             "!relative !bg-red-500 !pr-10 !text-white !border-red-500 shadow-lg rounded-lg",
           title: "!text-white font-semibold",

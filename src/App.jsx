@@ -8,6 +8,8 @@ import NotFoundPage from "./pages/notFoundPage"
 import SignupPage from "./pages/signupPage"
 import SignupSuccessPage from "./pages/signupSuccess"
 import LoginPage from "./pages/loginPage"
+import ProfilePage from "./pages/profilePage"
+import ResetPasswordPage from "./pages/resetPasswordPage"
 import { Toaster } from "@/components/ui/sonner"
 
 function HomePage() {
@@ -31,6 +33,8 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signup/success" element={<SignupSuccessPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />
