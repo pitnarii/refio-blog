@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import axios from "axios"
-import {filters} from "../data/blogPosts"
+import { filters } from "../data/blogPosts"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import {
@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-// function for changing date format
 function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString("en-GB", {
     day: "numeric",
@@ -23,25 +22,32 @@ function formatDate(dateString) {
 
 export default function ArticleSection() {
   const [activeFilter, setActiveFilter] = useState("Highlight")
-  const [searchQuery, setSearchQuery] = useState("")
-// fetching data from api
   const [blogPosts, setPosts] = useState([])
-// pagination
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [searchKeyword, setSearchKeyword] = useState("")
+  const [suggestions, setSuggestions] = useState([])
+  const [searchResults, setSearchResults] = useState([])
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+
+  const isSearchActive = searchKeyword.trim() !== ""
 
   useEffect(() => {
-    setPosts([]);
-    setPage(1);
-    setHasMore(true);
-  }, [activeFilter]);
+    setPosts([])
+    setPage(1)
+    setHasMore(true)
+  }, [activeFilter])
 
   useEffect(() => {
+    if (isSearchActive) return
+
     const getPosts = async () => {
-      setIsLoading(true);
+      setIsLoading(true)
       try {
-        const categoryParam = activeFilter === "Highlight" ? "" : activeFilter;
+        const categoryParam = activeFilter === "Highlight" ? "" : activeFilter
 
         const response = await axios.get(
           "https://blog-post-project-api.vercel.app/posts",
@@ -52,72 +58,124 @@ export default function ArticleSection() {
               category: categoryParam,
             },
           }
-        );
+        )
 
         setPosts((prevPosts) =>
           page === 1
             ? response.data.posts
             : [...prevPosts, ...response.data.posts]
-        );
+        )
 
         if (response.data.currentPage >= response.data.totalPages) {
-          setHasMore(false);
+          setHasMore(false)
         }
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching posts:", error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    getPosts();
-  }, [page, activeFilter]);
+    getPosts()
+  }, [page, activeFilter, isSearchActive])
+
+  useEffect(() => {
+    if (!isSearchActive) {
+      setSuggestions([])
+      setSearchResults([])
+      return
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsSearching(true)
+      try {
+        const categoryParam = activeFilter === "Highlight" ? "" : activeFilter
+
+        const response = await axios.get(
+          "https://blog-post-project-api.vercel.app/posts",
+          {
+            params: {
+              keyword: searchKeyword.trim(),
+              limit: 6,
+              category: categoryParam,
+            },
+          }
+        )
+
+        const results = response.data.posts
+        setSuggestions(results)
+        setSearchResults(results)
+      } catch (error) {
+        console.error("Error searching posts:", error)
+        setSuggestions([])
+        setSearchResults([])
+      } finally {
+        setIsSearching(false)
+      }
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
+  }, [searchKeyword, activeFilter, isSearchActive])
 
   const handleLoadMore = () => {
     if (!isLoading && hasMore) {
-      setPage((prev) => prev + 1);
+      setPage((prev) => prev + 1)
     }
-  };
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchKeyword(e.target.value)
+    setShowDropdown(true)
+  }
+
+  const handleSelectSuggestion = (post) => {
+    setSearchKeyword(post.title)
+    setSearchResults([post])
+    setSuggestions([post])
+    setShowDropdown(false)
+  }
 
   const filteredArticles = blogPosts.filter((article) => {
-    const matchesFilter =
-      activeFilter === "Highlight" || article.category === activeFilter
-
-    const matchesSearch =
-      searchQuery === "" ||
-      article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.description.toLowerCase().includes(searchQuery.toLowerCase())
-
-    return matchesFilter && matchesSearch
+    return activeFilter === "Highlight" || article.category === activeFilter
   })
+
+  const articlesToShow = isSearchActive ? searchResults : filteredArticles
+
   function BlogCard({ id, image, category, title, description, author, date }) {
     return (
       <div className="flex flex-col gap-4">
-        <a href="#" className="relative block h-[212px] sm:h-[360px] overflow-hidden rounded-md">
-          <img className="h-full w-full object-cover" src={image} alt={title}/>
+        <a href="#" className="relative block h-[212px] overflow-hidden rounded-md sm:h-[360px]">
+          <img className="h-full w-full object-cover" src={image} alt={title} />
         </a>
         <div className="flex flex-col">
           <div className="flex">
-            <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">{category}</span>
+            <span className="mb-2 rounded-full bg-green-200 px-3 py-1 text-sm font-semibold text-green-600">
+              {category}
+            </span>
           </div>
           <Link to={`/viewPostPage/${id}`}>
-            <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
+            <h2 className="mb-2 line-clamp-2 text-start text-xl font-bold hover:underline">
               {title}
             </h2>
           </Link>
-          <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
+          <p className="mb-4 line-clamp-3 flex-grow text-sm text-muted-foreground">
             {description}
           </p>
           <div className="flex items-center text-sm">
-            <img className="w-8 h-8 rounded-full mr-2" src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg" alt="Tomson P." />
+            <img
+              className="mr-2 h-8 w-8 rounded-full"
+              src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+              alt="Tomson P."
+            />
             <span>{author}</span>
             <span className="mx-2 text-gray-300">|</span>
             <span>{formatDate(date)}</span>
           </div>
         </div>
       </div>
-    );
+    )
   }
+
   return (
     <section className="py-10">
       <h2 className="mb-6 text-left text-xl font-bold text-gray-900">
@@ -126,14 +184,34 @@ export default function ArticleSection() {
 
       <div className="mb-10 flex flex-col gap-4 rounded-2xl bg-[#EFEEEB] p-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative order-1 w-full sm:order-2 sm:w-auto sm:min-w-[240px]">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          {!showDropdown && (
+            <Search className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-gray-400" />
+          )}
           <Input
             type="text"
             placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchKeyword}
+            onChange={handleSearchChange}
+            onFocus={() => setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
             className="rounded-sm py-3 placeholder:text-muted-foreground focus-visible:border-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0"
           />
+
+          {showDropdown && isSearchActive && suggestions.length > 0 && (
+            <ul className="absolute left-0 right-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-sm border border-gray-200 bg-white py-1 shadow-lg">
+              {suggestions.map((post) => (
+                <li key={post.id}>
+                  <button
+                    type="button"
+                    onMouseDown={() => handleSelectSuggestion(post)}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100"
+                  >
+                    {post.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="order-2 w-full sm:hidden">
@@ -169,8 +247,12 @@ export default function ArticleSection() {
         </div>
       </div>
 
+      {isSearching && (
+        <p className="mb-4 text-sm text-muted-foreground">Searching...</p>
+      )}
+
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-        {filteredArticles.map((post) => (
+        {articlesToShow.map((post) => (
           <BlogCard
             key={post.id}
             id={post.id}
@@ -183,12 +265,18 @@ export default function ArticleSection() {
           />
         ))}
       </div>
-      {/* ปุ่มโหลดเพิ่ม */}
-      {hasMore && (
-        <div className="text-center mt-8">
+
+      {isSearchActive && !isSearching && articlesToShow.length === 0 && (
+        <p className="mt-8 text-center text-muted-foreground">
+          No articles found for &quot;{searchKeyword}&quot;
+        </p>
+      )}
+
+      {hasMore && !isSearchActive && (
+        <div className="mt-8 text-center">
           <button
             onClick={handleLoadMore}
-            className="hover:text-muted-foreground font-medium underline"
+            className="font-medium underline hover:text-muted-foreground"
             disabled={isLoading}
           >
             {isLoading ? "Loading..." : "View more"}
