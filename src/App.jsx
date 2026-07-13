@@ -5,6 +5,9 @@ import ArticleSection from "./components/ArticleSection"
 import Footer from "./components/Footer"
 import ViewPostPage from "./pages/viewPostPage"
 import NotFoundPage from "./pages/notFoundPage"
+import SignupPage from "./pages/signupPage"
+import SignupSuccessPage from "./pages/signupSuccess"
+import LoginPage from "./pages/loginPage"
 import { Toaster } from "@/components/ui/sonner"
 
 function HomePage() {
@@ -25,6 +28,9 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/viewPostPage/:id" element={<ViewPostPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/signup/success" element={<SignupSuccessPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Footer />

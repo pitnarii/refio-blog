@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -17,18 +17,18 @@ export default function Navbar() {
       </a>
       {/* Desktop: buttons */}
       <div className="hidden md:flex space-x-4">
-        <button
-          type="button"
+        <Link
+          to="/login"
           className="rounded-full border border-gray-300 px-6 py-2 text-m font-medium text-gray-900 transition-colors hover:text-gray-500"
         >
           Log in
-        </button>
-        <button
-          type="button"
-          className="rounded-full bg-gray-900 px-6 py-2 text-m font-medium text-white hover:bg-gray-700 transition-color"
+        </Link>
+        <Link
+          to="/signup"
+          className="rounded-full bg-gray-900 px-6 py-2 text-m font-medium text-white transition-color hover:bg-gray-700"
         >
           Sign up
-        </button>
+        </Link>
       </div>
       {/* mobile: dropdown */}
       <div className="md:hidden">
@@ -40,13 +40,20 @@ export default function Navbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-[#F9F8F6]">
             <DropdownMenuItem>
-            <button
-              type="button" className="w-full rounded-full border border-gray-300 px-6 py-2 text-m font-medium text-gray-900 transition-colors hover:text-gray-500"
-            >Log in</button>
+              <Link
+                to="/login"
+                className="block w-full rounded-full border border-gray-300 px-6 py-2 text-center text-m font-medium text-gray-900 transition-colors hover:text-gray-500"
+              >
+                Log in
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <button 
-                 type="button" className="w-full rounded-full bg-gray-900 px-6 py-2 text-m font-medium text-white hover:bg-gray-700 transition-color">Sign up</button>
+              <Link
+                to="/signup"
+                className="block w-full rounded-full bg-gray-900 px-6 py-2 text-center text-m font-medium text-white transition-color hover:bg-gray-700"
+              >
+                Sign up
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

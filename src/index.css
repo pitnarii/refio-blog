@@ -198,3 +198,36 @@ body {
     @apply bg-transparent p-0;
   }
 }
+
+/* Error toast for login failures */
+[data-sonner-toast][data-type="error"] {
+  position: relative !important;
+  padding-right: 2.5rem !important;
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-color: #ef4444 !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-title] {
+  color: white !important;
+  font-weight: 600;
+}
+
+[data-sonner-toast][data-type="error"] [data-description] {
+  color: rgb(255 255 255 / 0.9) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-close-button] {
+  position: absolute !important;
+  left: auto !important;
+  right: 0.75rem !important;
+  top: 0.75rem !important;
+  transform: none !important;
+  color: white !important;
+  border-color: rgb(255 255 255 / 0.3) !important;
+  background-color: transparent !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-close-button]:hover {
+  background-color: rgb(255 255 255 / 0.1) !important;
+}

@@ -1,5 +1,5 @@
 import { Toaster as Sonner } from "sonner";
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, Loader2Icon } from "lucide-react"
 
 const Toaster = ({
   ...props
@@ -8,6 +8,7 @@ const Toaster = ({
     <Sonner
       theme="light"
       className="toaster group"
+      closeButton
       icons={{
         success: (
           <CircleCheckIcon className="size-4" />
@@ -18,9 +19,7 @@ const Toaster = ({
         warning: (
           <TriangleAlertIcon className="size-4" />
         ),
-        error: (
-          <OctagonXIcon className="size-4" />
-        ),
+        error: null,
         loading: (
           <Loader2Icon className="size-4 animate-spin" />
         ),
@@ -30,12 +29,21 @@ const Toaster = ({
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)"
+          "--border-radius": "var(--radius)",
+          "--error-bg": "#ef4444",
+          "--error-text": "#ffffff",
+          "--error-border": "#ef4444",
         }
       }
       toastOptions={{
         classNames: {
           toast: "cn-toast",
+          error:
+            "!relative !bg-red-500 !pr-10 !text-white !border-red-500 shadow-lg rounded-lg",
+          title: "!text-white font-semibold",
+          description: "!text-white/90 text-sm",
+          closeButton:
+            "!absolute !right-3 !top-3 !left-auto !translate-x-0 !translate-y-0 !text-white !border-white/30 !bg-transparent hover:!bg-white/10",
         },
       }}
       {...props} />
