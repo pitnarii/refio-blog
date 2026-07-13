@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import {
-  Bell,
   ChevronDown,
   ExternalLink,
   LogOut,
@@ -17,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import NotificationBell from "@/components/NotificationBell"
 import ProfileAvatar from "@/components/ProfileAvatar"
 import {
   ADMIN_PANEL_URL,
@@ -48,13 +48,7 @@ function AuthButtons({ className = "" }) {
 function UserMenu({ user, onLogout }) {
   return (
     <div className="flex items-center gap-3 sm:gap-4">
-      <button
-        type="button"
-        aria-label="Notifications"
-        className="flex size-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-600 transition-colors hover:bg-gray-50"
-      >
-        <Bell className="size-5" strokeWidth={1.5} />
-      </button>
+      <NotificationBell />
 
       <DropdownMenu>
         <DropdownMenuTrigger
@@ -87,14 +81,7 @@ function UserMenu({ user, onLogout }) {
           </DropdownMenuItem>
           {showAdminPanel(user) && (
             <DropdownMenuItem
-              render={
-                <a
-                  href={ADMIN_PANEL_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full"
-                />
-              }
+              render={<Link to={ADMIN_PANEL_URL} className="w-full" />}
             >
               <ExternalLink className="size-4" />
               Admin panel

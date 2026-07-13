@@ -2,9 +2,7 @@ export const REGISTERED_USERS_KEY = "registeredUsers"
 export const CURRENT_USER_KEY = "currentUser"
 export const PASSWORD_OVERRIDES_KEY = "passwordOverrides"
 export const AUTH_CHANGED_EVENT = "auth-changed"
-export const ADMIN_PANEL_URL =
-  import.meta.env.VITE_ADMIN_PANEL_URL ??
-  "https://your-admin-dashboard.example.com"
+export const ADMIN_PANEL_URL = "/admin/article-management"
 
 function notifyAuthChanged() {
   window.dispatchEvent(new Event(AUTH_CHANGED_EVENT))
