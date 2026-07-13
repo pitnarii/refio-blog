@@ -24,23 +24,60 @@ function formatDate(dateString) {
 export default function ArticleSection() {
   const [activeFilter, setActiveFilter] = useState("Highlight")
   const [searchQuery, setSearchQuery] = useState("")
-
 // fetching data from api
   const [blogPosts, setPosts] = useState([])
+// pagination
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+  }, [activeFilter]);
+
   useEffect(() => {
     const getPosts = async () => {
+      setIsLoading(true);
       try {
-        const { data } = await axios(
-          "https://blog-post-project-api.vercel.app/posts"
+        const categoryParam = activeFilter === "Highlight" ? "" : activeFilter;
+
+        const response = await axios.get(
+          "https://blog-post-project-api.vercel.app/posts",
+          {
+            params: {
+              page,
+              limit: 6,
+              category: categoryParam,
+            },
+          }
         );
-        setPosts(data.posts);
+
+        setPosts((prevPosts) =>
+          page === 1
+            ? response.data.posts
+            : [...prevPosts, ...response.data.posts]
+        );
+
+        if (response.data.currentPage >= response.data.totalPages) {
+          setHasMore(false);
+        }
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching posts:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     getPosts();
-  }, [])
+  }, [page, activeFilter]);
+
+  const handleLoadMore = () => {
+    if (!isLoading && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   const filteredArticles = blogPosts.filter((article) => {
     const matchesFilter =
@@ -133,7 +170,7 @@ export default function ArticleSection() {
       </div>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
-        {filteredArticles.slice(0, 6).map((post) => (
+        {filteredArticles.map((post) => (
           <BlogCard
             key={post.id}
             id={post.id}
@@ -146,15 +183,18 @@ export default function ArticleSection() {
           />
         ))}
       </div>
-
-      <div className="mt-12 text-center">
-        <a
-          href="#"
-          className="text-sm text-gray-900 underline underline-offset-4 transition-colors hover:text-gray-600"
-        >
-          View more
-        </a>
-      </div>
+      {/* ปุ่มโหลดเพิ่ม */}
+      {hasMore && (
+        <div className="text-center mt-8">
+          <button
+            onClick={handleLoadMore}
+            className="hover:text-muted-foreground font-medium underline"
+            disabled={isLoading}
+          >
+            {isLoading ? "Loading..." : "View more"}
+          </button>
+        </div>
+      )}
     </section>
   )
 }

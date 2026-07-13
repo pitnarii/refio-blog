@@ -5,6 +5,7 @@ import ArticleSection from "./components/ArticleSection"
 import Footer from "./components/Footer"
 import ViewPostPage from "./pages/viewPostPage"
 import NotFoundPage from "./pages/notFoundPage"
+import { Toaster } from "@/components/ui/sonner"
 
 function HomePage() {
   return (
@@ -18,6 +19,7 @@ function HomePage() {
 function App() {
   return (
     <div className="min-h-screen bg-[#F9F8F6] text-gray-900">
+      <Toaster position="bottom-right" />
       <Navbar />
       <div className="mx-auto w-full max-w-page px-10">
         <Routes>

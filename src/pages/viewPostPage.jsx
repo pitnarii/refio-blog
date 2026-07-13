@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -13,6 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner"
 import { X } from "lucide-react";
 
 const AUTHOR_AVATAR =
@@ -88,6 +90,7 @@ function ViewPostPage() {
   const handleCopyLink = async () => {
     await navigator.clipboard.writeText(window.location.href);
     setCopied(true);
+    toast.success("Copied!", { description: "This article has been copied to your clipboard", position: "bottom-right" })
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -178,14 +181,17 @@ function ViewPostPage() {
           />
           {likes}
         </button>
-
+      {/* copy Link + social media buttons */}
+      <div className="ml-auto flex flex-wrap items-center gap-2">
         <button
           type="button"
-          onClick={handleCopyLink}
+          onClick={() => {
+            handleCopyLink();
+          }}
           className="flex items-center gap-2 rounded-full border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50"
         >
           <Link2 className="size-4" />
-          {copied ? "Copied!" : "Copy link"}
+           {copied ? "Copied!" : "Copy link"}
         </button>
 
         <div className="flex items-center gap-2">
@@ -224,7 +230,7 @@ function ViewPostPage() {
           </a>
         </div>
       </div>
-
+      </div>
       <section className="mt-12">
         <h2 className="mb-4 text-xl font-bold text-gray-900">Comment</h2>
         <textarea
@@ -234,7 +240,7 @@ function ViewPostPage() {
           className="mb-4 min-h-[120px] w-full resize-none rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 placeholder:text-muted-foreground focus:border-gray-400 focus:outline-none"
         />
         <div className="flex justify-end">
-          <Button type="button" onClick={handleSendComment}>
+          <Button type="button" onClick={handleSendComment} className="rounded-full h-10 w-20">
             Send
           </Button>
           {/* create account alert */}
@@ -285,6 +291,7 @@ function ViewPostPage() {
             </div>
           ))}
         </div>
+
       </section>
     </article>
   );
