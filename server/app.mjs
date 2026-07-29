@@ -7,6 +7,7 @@ import {
   POST_FROM,
   buildPostsQuery,
 } from "./utils/posts.mjs";
+import { validatePostBody } from "./middleware/validatePostBody.mjs";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -99,23 +100,9 @@ app.get("/posts/:postId", async (req, res) => {
   }
 });
 
-app.post("/posts", async (req, res) => {
+app.post("/posts", validatePostBody, async (req, res) => {
   const { title, image, category_id, description, content, status_id } =
     req.body;
-
-  if (
-    !title ||
-    !image ||
-    !category_id ||
-    !description ||
-    !content ||
-    !status_id
-  ) {
-    return res.status(400).json({
-      message:
-        "Server could not create post because there are missing data from client",
-    });
-  }
 
   try {
     await connectionPool.query(
@@ -133,24 +120,10 @@ app.post("/posts", async (req, res) => {
   }
 });
 
-app.put("/posts/:postId", async (req, res) => {
+app.put("/posts/:postId", validatePostBody, async (req, res) => {
   const { postId } = req.params;
   const { title, image, category_id, description, content, status_id } =
     req.body;
-
-  if (
-    !title ||
-    !image ||
-    !category_id ||
-    !description ||
-    !content ||
-    !status_id
-  ) {
-    return res.status(400).json({
-      message:
-        "Server could not update post because there are missing data from client",
-    });
-  }
 
   try {
     const result = await connectionPool.query(
