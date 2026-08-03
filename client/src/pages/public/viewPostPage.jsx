@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { api } from "../../lib/api";
 import ReactMarkdown from "react-markdown";
 import { Heart, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,6 @@ import {
   AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
@@ -74,8 +73,8 @@ function ViewPostPage() {
   useEffect(() => {
     const getPost = async () => {
       try {
-        const { data } = await axios(
-          `https://blog-post-project-api.vercel.app/posts/${id}`,
+        const { data } = await api.get(
+          `/api/posts/${id}`,
         );
         setPost(data);
         setLikes(data.likes);

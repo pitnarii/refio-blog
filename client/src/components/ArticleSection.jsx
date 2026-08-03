@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
-import axios from "axios"
 import { filters } from "../data/blogPosts"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -11,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-
+import { api } from "../lib/api"
 function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString("en-GB", {
     day: "numeric",
@@ -49,8 +48,8 @@ export default function ArticleSection() {
       try {
         const categoryParam = activeFilter === "Highlight" ? "" : activeFilter
 
-        const response = await axios.get(
-          "https://blog-post-project-api.vercel.app/posts",
+        const response = await api.get(
+          "/api/posts",
           {
             params: {
               page,
@@ -91,8 +90,8 @@ export default function ArticleSection() {
       try {
         const categoryParam = activeFilter === "Highlight" ? "" : activeFilter
 
-        const response = await axios.get(
-          "https://blog-post-project-api.vercel.app/posts",
+        const response = await api.get(
+          "/api/posts",
           {
             params: {
               keyword: searchKeyword.trim(),
