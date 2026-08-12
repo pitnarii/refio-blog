@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
-import { setCurrentUser, validateLogin } from "@/lib/auth"
+import { login } from "@/lib/auth"
 
 const loginSchema = z.object({
   email: z
@@ -42,22 +42,19 @@ export default function LoginPage() {
     mode: "onSubmit",
   })
 
-  const onSubmit = (data) => {
-    const result = validateLogin(data.email, data.password)
-
-    if (!result.success) {
+  const onSubmit = async (data) => {
+    try {
+      await login(data.email, data.password)
+      toast.success("Login successful")
+      navigate("/")
+    } catch {
       form.setError("email", { type: "manual", message: "" })
       form.setError("password", { type: "manual", message: "" })
 
       toast.error("Your password is incorrect or this email doesn't exist", {
         description: "Please try another password or email",
       })
-      return
     }
-
-    setCurrentUser(result.user)
-    toast.success("Login successful")
-    navigate("/")
   }
 
   const handleFieldChange = (field, value) => {

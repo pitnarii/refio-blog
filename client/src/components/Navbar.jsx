@@ -114,8 +114,8 @@ export default function Navbar() {
     return () => window.removeEventListener(AUTH_CHANGED_EVENT, syncUser)
   }, [location.pathname])
 
-  const handleLogout = () => {
-    clearCurrentUser()
+  const handleLogout = async () => {
+    await clearCurrentUser()
     navigate("/")
   }
 

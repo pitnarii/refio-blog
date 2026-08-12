@@ -12,6 +12,11 @@ import {
   showAdminPanel,
   updateCurrentUserProfile,
 } from "@/lib/auth"
+import {
+  readFileAsDataURL,
+  uploadImage,
+  validateImageFile,
+} from "@/lib/upload"
 
 const inputClassName =
   "h-12 rounded-lg border-gray-200 bg-white focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -25,7 +30,9 @@ export default function AdminProfile() {
   const [email, setEmail] = useState("")
   const [bio, setBio] = useState("")
   const [profilePicture, setProfilePicture] = useState(null)
+  const [profilePictureFile, setProfilePictureFile] = useState(null)
   const [isReady, setIsReady] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     const user = getCurrentUser()
@@ -52,39 +59,64 @@ export default function AdminProfile() {
     fileInputRef.current?.click()
   }
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files?.[0]
-    if (!file) return
+    const validation = validateImageFile(file)
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file")
+    if (!validation.valid) {
+      if (validation.error === "invalid_type") {
+        toast.error("Please upload an image file (JPEG, PNG, GIF, WEBP)")
+      } else if (validation.error === "file_too_large") {
+        toast.error("The file is too large. Please upload an image smaller than 5MB.")
+      }
+      event.target.value = ""
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      setProfilePicture(reader.result)
+    try {
+      setProfilePictureFile(file)
+      setProfilePicture(await readFileAsDataURL(file))
+    } catch {
+      toast.error("Failed to read the image file")
     }
-    reader.readAsDataURL(file)
+
     event.target.value = ""
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (bio.length > 120) {
       toast.error("Bio must be at most 120 characters")
       return
     }
 
-    updateCurrentUserProfile({
-      name: name.trim(),
-      username: username.trim(),
-      bio: bio.trim(),
-      profilePicture,
-    })
+    setIsSaving(true)
 
-    toast.success("Saved profile", {
-      description: "Your profile has been successfully updated",
-    })
+    try {
+      let pictureUrl = profilePicture
+
+      if (profilePictureFile) {
+        pictureUrl = await uploadImage(profilePictureFile)
+      }
+
+      const updatedUser = await updateCurrentUserProfile({
+        name: name.trim(),
+        username: username.trim(),
+        bio: bio.trim(),
+        profilePicture: pictureUrl,
+      })
+
+      setProfilePicture(updatedUser.profilePicture ?? null)
+      setProfilePictureFile(null)
+      setBio(updatedUser.bio ?? "")
+
+      toast.success("Saved profile", {
+        description: "Your profile has been successfully updated",
+      })
+    } catch {
+      toast.error("Unable to save profile")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   if (!isReady) {
@@ -102,9 +134,10 @@ export default function AdminProfile() {
             <Button
               type="button"
               onClick={handleSave}
+              disabled={isSaving}
               className="h-11 rounded-full bg-gray-900 px-8 text-sm font-medium text-white hover:bg-gray-700"
             >
-              Save
+              {isSaving ? "Saving..." : "Save"}
             </Button>
           </div>
 
@@ -124,7 +157,7 @@ export default function AdminProfile() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
                   className="hidden"
                   onChange={handleFileChange}
                 />

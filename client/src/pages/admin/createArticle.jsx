@@ -26,12 +26,13 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import {
-  getArticleById,
-  saveArticle,
-  updateArticle,
-} from "@/lib/articles"
+  createPost,
+  getAdminPostById,
+  updatePost,
+} from "@/lib/posts"
 import { getCategoryNames } from "@/lib/categories"
 import { getCurrentUser, showAdminPanel } from "@/lib/auth"
+import { readFileAsDataURL, uploadImage, validateImageFile } from "@/lib/upload"
 
 const createArticleSchema = z.object({
   category: z.string().min(1, "Category is required"),
@@ -55,7 +56,9 @@ export default function CreateArticle() {
   const isEditing = Boolean(id)
   const fileInputRef = useRef(null)
   const [thumbnail, setThumbnail] = useState(null)
+  const [thumbnailFile, setThumbnailFile] = useState(null)
   const [authorName, setAuthorName] = useState("Thompson P.")
+  const [isSaving, setIsSaving] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(createArticleSchema),
@@ -81,90 +84,126 @@ export default function CreateArticle() {
       return
     }
 
-    if (isEditing) {
-      const article = getArticleById(id)
-
-      if (!article) {
-        navigate("/admin/article-management")
-        return
-      }
-
-      form.reset({
-        category: article.category,
-        title: article.title,
-        introduction: article.introduction ?? "",
-        content: article.content ?? "",
-      })
-      setThumbnail(article.thumbnail ?? null)
-      setAuthorName(article.author ?? user.name ?? "Thompson P.")
+    if (!isEditing) {
+      setAuthorName(user.name || "Thompson P.")
       return
     }
 
-    setAuthorName(user.name || "Thompson P.")
+    let cancelled = false
+
+    async function loadArticle() {
+      try {
+        const article = await getAdminPostById(id)
+
+        if (cancelled) return
+
+        form.reset({
+          category: article.category,
+          title: article.title,
+          introduction: article.introduction ?? article.description ?? "",
+          content: article.content ?? "",
+        })
+        setThumbnail(article.image ?? article.thumbnail ?? null)
+        setThumbnailFile(null)
+        setAuthorName(article.author ?? user.name ?? "Thompson P.")
+      } catch {
+        if (!cancelled) {
+          toast.error("Failed to load article")
+          navigate("/admin/article-management")
+        }
+      }
+    }
+
+    loadArticle()
+
+    return () => {
+      cancelled = true
+    }
   }, [form, id, isEditing, navigate])
 
   const handleUploadClick = () => {
     fileInputRef.current?.click()
   }
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files?.[0]
-    if (!file) return
+    const validation = validateImageFile(file)
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Please upload an image file")
+    if (!validation.valid) {
+      if (validation.error === "invalid_type") {
+        toast.error("Please upload an image file (JPEG, PNG, GIF, WEBP)")
+      } else if (validation.error === "file_too_large") {
+        toast.error("The file is too large. Please upload an image smaller than 5MB.")
+      }
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      setThumbnail(reader.result)
+    try {
+      setThumbnailFile(file)
+      setThumbnail(await readFileAsDataURL(file))
+    } catch {
+      toast.error("Failed to read the image file")
     }
-    reader.readAsDataURL(file)
+
     event.target.value = ""
   }
 
   const handleSave = (status) => {
-    form.handleSubmit((values) => {
-      const articleData = {
-        title: values.title.trim(),
-        category: values.category,
-        status,
-        introduction: values.introduction.trim(),
-        content: values.content.trim(),
-        author: authorName,
-        thumbnail,
-      }
+    form.handleSubmit(async (values) => {
+      setIsSaving(true)
 
-      if (isEditing) {
-        updateArticle(id, articleData)
+      try {
+        let imageUrl = thumbnail
 
-        if (status === "published") {
-          toast.success("Article updated and published", {
-            description: "Your article has been successfully published",
-          })
-        } else {
-          toast.success("Article updated as draft", {
-            description: "Your article has been saved as draft",
-          })
+        if (thumbnailFile) {
+          imageUrl = await uploadImage(thumbnailFile)
         }
-      } else {
-        saveArticle(articleData)
 
-        if (status === "published") {
-          toast.success("Create article and published", {
-            description: "Your article has been successfully published",
-          })
-        } else {
-          toast.success("Create article as draft", {
-            description: "Your article has been saved as draft",
-          })
+        const articleData = {
+          title: values.title.trim(),
+          category: values.category,
+          status,
+          introduction: values.introduction.trim(),
+          content: values.content.trim(),
+          thumbnail: imageUrl,
         }
-      }
 
-      navigate("/admin/article-management")
+        if (isEditing) {
+          await updatePost(id, articleData)
+
+          if (status === "published") {
+            toast.success("Article updated and published", {
+              description: "Your article has been successfully published",
+            })
+          } else {
+            toast.success("Article updated as draft", {
+              description: "Your article has been saved as draft",
+            })
+          }
+        } else {
+          await createPost(articleData)
+
+          if (status === "published") {
+            toast.success("Create article and published", {
+              description: "Your article has been successfully published",
+            })
+          } else {
+            toast.success("Create article as draft", {
+              description: "Your article has been saved as draft",
+            })
+          }
+        }
+
+        navigate("/admin/article-management")
+      } catch {
+        toast.error("Failed to save article")
+      } finally {
+        setIsSaving(false)
+      }
     })()
   }
+
+  
 
   return (
     <div className="flex min-h-screen bg-[#EFEEEB]">
@@ -180,16 +219,18 @@ export default function CreateArticle() {
               type="button"
               variant="outline"
               onClick={() => handleSave("draft")}
+              disabled={isSaving}
               className="h-11 rounded-full border-gray-900 bg-white px-6 text-sm font-medium text-gray-900 hover:bg-gray-100"
             >
-              Save as draft
+              {isSaving ? "Saving..." : "Save as draft"}
             </Button>
             <Button
               type="button"
               onClick={() => handleSave("published")}
+              disabled={isSaving}
               className="h-11 rounded-full bg-gray-900 px-6 text-sm font-medium text-white hover:bg-gray-700"
             >
-              Save and publish
+              {isSaving ? "Saving..." : "Save and publish"}
             </Button>
           </div>
         </div>

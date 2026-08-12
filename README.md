@@ -1,36 +1,42 @@
 # refio-blog
 
-Personal blog project with a Vite + React client.
+Personal blog frontend (Vite + React).
+
+API lives in a separate repo: [`refio-blog-backend`](../refio-blog-backend).
 
 ## Project structure
 
 ```text
 refio-blog/
 ├── client/                 # Frontend (React + Vite)
-│   ├── public/             # Static assets
+│   ├── public/
 │   ├── src/
-│   │   ├── assets/         # Images
-│   │   ├── components/     # Shared UI (Navbar, Hero, ui/*)
-│   │   ├── data/           # Seed / mock data
-│   │   ├── lib/            # Helpers (auth, articles, utils)
+│   │   ├── components/
+│   │   ├── lib/            # API helpers (auth, posts, upload)
 │   │   ├── pages/
-│   │   │   ├── admin/      # Admin pages
-│   │   │   └── public/     # Public pages
 │   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── index.html
+│   │   └── main.jsx
 │   ├── package.json
-│   ├── vite.config.js
-│   └── vercel.json
-├── package.json            # npm workspaces root
-└── vercel.json
+│   └── vite.config.js
+└── package.json            # npm workspaces root (client only)
 ```
 
 ## How to run
 
+1. Start the backend (separate terminal):
+
+```bash
+cd ../refio-blog-backend
+npm install
+npm run dev
+```
+
+2. Start the frontend:
+
 ```bash
 npm install
-npm run dev          # client on http://localhost:5173
-npm run build        # production build → client/dist
+npm run dev
 ```
+
+Client: http://localhost:5173  
+API: http://localhost:4000 (set `VITE_API_BASE_URL=http://localhost:4000` in `client/.env`)

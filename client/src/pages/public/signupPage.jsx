@@ -13,10 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
-import {
-  isEmailTaken,
-  saveRegisteredUser,
-} from "@/lib/auth"
+import { register } from "@/lib/auth"
+import { toast } from "sonner"
 
 const signupSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -47,17 +45,23 @@ export default function SignupPage() {
     mode: "onSubmit",
   })
 
-  const onSubmit = (data) => {
-    if (isEmailTaken(data.email)) {
-      form.setError("email", {
-        type: "manual",
-        message: "Email is already taken, Please try another email.",
-      })
-      return
-    }
+  const onSubmit = async (data) => {
+    try {
+      await register(data)
+      navigate("/signup/success")
+    } catch (error) {
+      if (error.response?.status === 409) {
+        form.setError("email", {
+          type: "manual",
+          message: "Email is already taken, Please try another email.",
+        })
+        return
+      }
 
-    saveRegisteredUser(data)
-    navigate("/signup/success")
+      toast.error("Unable to sign up", {
+        description: error.response?.data?.error ?? "Please try again",
+      })
+    }
   }
 
   return (

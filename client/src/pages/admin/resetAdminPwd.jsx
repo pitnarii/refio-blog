@@ -84,8 +84,10 @@ export default function ResetAdminPwd() {
     setUser(currentUser)
   }, [navigate])
 
-  const onSubmit = (values) => {
-    if (!verifyCurrentPassword(user.email, values.currentPassword)) {
+  const onSubmit = async (values) => {
+    const isValid = await verifyCurrentPassword(values.currentPassword)
+
+    if (!isValid) {
       form.setError("currentPassword", {
         type: "manual",
         message: "Current password is incorrect",
@@ -97,31 +99,26 @@ export default function ResetAdminPwd() {
     setDialogOpen(true)
   }
 
-  const handleConfirmReset = () => {
+  const handleConfirmReset = async () => {
     const values = pendingValuesRef.current
     if (!values || !user) return
 
-    const result = updateUserPassword(
-      user.email,
-      values.currentPassword,
-      values.newPassword
-    )
+    try {
+      await updateUserPassword(values.currentPassword, values.newPassword)
 
-    if (!result.success) {
+      form.reset()
+      setDialogOpen(false)
+
+      toast.success("Password reset", {
+        description: "Your password has been successfully updated",
+      })
+
+      pendingValuesRef.current = null
+    } catch {
       toast.error("Unable to reset password", {
         description: "Please check your current password and try again",
       })
-      return
     }
-
-    form.reset()
-    setDialogOpen(false)
-
-    toast.success("Password reset", {
-      description: "Your password has been successfully updated",
-    })
-
-    pendingValuesRef.current = null
   }
 
   const handleCancel = () => {

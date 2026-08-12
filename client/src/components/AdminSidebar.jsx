@@ -22,8 +22,8 @@ const navItemClass = (active, id) =>
 export default function AdminSidebar({ active = "article-management" }) {
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    clearCurrentUser()
+  const handleLogout = async () => {
+    await clearCurrentUser()
     navigate("/")
   }
 

@@ -24,11 +24,7 @@ import {
 import { cn } from "@/lib/utils"
 import { articleStatuses } from "@/data/adminArticles"
 import { getCategoryNames } from "@/lib/categories"
-import {
-  ARTICLES_CHANGED_EVENT,
-  deleteArticle,
-  getArticles,
-} from "@/lib/articles"
+import { deletePost, getAdminPosts } from "@/lib/posts"
 import { getCurrentUser, showAdminPanel } from "@/lib/auth"
 
 function StatusBadge({ status }) {
@@ -54,7 +50,8 @@ function StatusBadge({ status }) {
 
 export default function ArticleManagement() {
   const navigate = useNavigate()
-  const [articles, setArticles] = useState(() => getArticles())
+  const [articles, setArticles] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
@@ -75,11 +72,30 @@ export default function ArticleManagement() {
   }, [navigate])
 
   useEffect(() => {
-    const syncArticles = () => setArticles(getArticles())
+    let cancelled = false
 
-    syncArticles()
-    window.addEventListener(ARTICLES_CHANGED_EVENT, syncArticles)
-    return () => window.removeEventListener(ARTICLES_CHANGED_EVENT, syncArticles)
+    async function fetchArticles() {
+      try {
+        const data = await getAdminPosts()
+        if (!cancelled) {
+          setArticles(data)
+        }
+      } catch {
+        if (!cancelled) {
+          toast.error("Failed to load articles")
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    fetchArticles()
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const filteredArticles = useMemo(() => {
@@ -116,16 +132,21 @@ export default function ArticleManagement() {
     }
   }
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     const articleId = pendingDeleteIdRef.current
     if (!articleId) return
 
-    deleteArticle(articleId)
-    setDialogOpen(false)
+    try {
+      await deletePost(articleId)
+      setArticles((prev) => prev.filter((article) => article.id !== articleId))
+      setDialogOpen(false)
 
-    toast.success("Article deleted", {
-      description: "The article has been removed from your list",
-    })
+      toast.success("Article deleted", {
+        description: "The article has been removed from your list",
+      })
+    } catch {
+      toast.error("Failed to delete article")
+    }
 
     pendingDeleteIdRef.current = null
   }
@@ -207,7 +228,16 @@ export default function ArticleManagement() {
                 </tr>
               </thead>
               <tbody>
-                {filteredArticles.length > 0 ? (
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="py-10 text-center text-sm text-gray-500"
+                    >
+                      Loading...
+                    </td>
+                  </tr>
+                ) : filteredArticles.length > 0 ? (
                   filteredArticles.map((article) => (
                     <tr
                       key={article.id}
