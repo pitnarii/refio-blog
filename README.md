@@ -4,7 +4,7 @@ Personal blog built with **React (Vite)** on the frontend and a separate **Expre
 
 | App | Repo | Deploy |
 |-----|------|--------|
-| Frontend | this repo (`refio-blog`) | [Vercel](https://vercel.com) |
+| Frontend | this repo (`refio-blog`) | [Vercel](https://refio-blog.vercel.app/) |
 | Backend | [`refio-blog-backend`](../refio-blog-backend) | [Render](https://render.com) |
 | Database / Auth / Storage | Supabase | Supabase Cloud |
 
